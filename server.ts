@@ -1,9 +1,8 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import "./db/connection/conn";
-import { Sequelize } from "sequelize";
 import commonRouter from "./routes/common.routes";
 import cookieParser from "cookie-parser";
-
+import cors from "cors";
 export const app = express();
 const port = process.env.PORT || 4000;
 
@@ -15,7 +14,11 @@ app.use(cookieParser());
 
 
 
-
+app.use((req: Request, res: Response, next: NextFunction) => {
+    next();
+}, cors({
+    origin: "http://localhost:5173"
+}));
 app.use("/api", commonRouter)
 
 

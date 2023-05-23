@@ -21,6 +21,7 @@
     "sequelize": "^6.31.1"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.13",
     "nodemon": "^2.0.22",
     "typescript": "^5.0.4"
   }
