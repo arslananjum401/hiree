@@ -7,7 +7,7 @@ import { payrollModel } from "../schema/payroll";
 const sequelize = new Sequelize(
     "hiree",//database name
     "root",//userName
-    "36^5pCN#HlrQ",//password
+    process.env.DatabasePassword,//password
     {
         dialect: "mysql",
         host: "localhost",

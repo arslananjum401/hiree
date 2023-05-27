@@ -1,8 +1,10 @@
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname + '/config/config.env' });
+
+
+
 import express, { NextFunction, Request, Response } from "express";
 import "./db/connection/conn";
-import * as dotenv from "dotenv";
-
-dotenv.config({ path: __dirname + '/config/config.env' });
 import commonRouter from "./routes/common.routes";
 import cookieParser from "cookie-parser";
 import cors from "cors";
