@@ -2,7 +2,6 @@ import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + '/config/config.env' });
 
 
-
 import express, { NextFunction, Request, Response } from "express";
 import "./db/connection/conn";
 import commonRouter from "./routes/common.routes";
