@@ -21,7 +21,6 @@ const connection = async () => {
         console.log('connection has been established successfully.');
     } catch (error) {
         console.log(`error occurred while establishing connection. Error:${error}`);
-
     }
 }
 

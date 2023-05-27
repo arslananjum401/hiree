@@ -18,6 +18,7 @@ export const payrollModel = (sequelize: Sequelize, employeeModel: ModelDefined<a
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
+        
         employeFK: {
             type: DataTypes.UUID,
             references: {

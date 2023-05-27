@@ -1,15 +1,17 @@
 import { Sequelize, ModelDefined, DataTypes, Optional } from "sequelize";
-interface userSchema {
+export interface userSchema {
     userId: string,
     email: string,
     username: string,
     imgUrl: string,
     firstName: string,
     lastName: string,
+    countryCode: string,
     phoneNumber: string,
     gender: "male" | "female",
     role: string,
-    DOB: Date
+    DOB: Date,
+    password: string
 }
 type NoteCreationAttributes = Optional<userSchema, 'firstName' | 'email'>;
 
@@ -32,41 +34,46 @@ export const userModel = (sequelize: Sequelize) => {
         // },
         email: {
             type: DataTypes.STRING,
-            allowNull: false
         },
         username: {
             type: DataTypes.STRING,
-            allowNull: false
+        },
+        password: {
+            type: DataTypes.STRING
         },
         firstName: {
             type: DataTypes.STRING,
-            allowNull: false
         },
         lastName: {
             type: DataTypes.STRING,
-            allowNull: false
+        },
+
+        countryCode: {
+            type: DataTypes.STRING,
         },
         phoneNumber: {
             type: DataTypes.STRING,
-            allowNull: false
         },
         gender: {
             type: DataTypes.STRING,
-            allowNull: false
         },
         role: {
             type: DataTypes.STRING,
-            allowNull: false
         },
         DOB: {
             type: DataTypes.DATE,
-            allowNull: false
         }
     },
         {
             timestamps: true,
             createdAt: true,
             updatedAt: false,
+            indexes: [
+                {
+                    unique: true,
+                    fields: ['email', "username"]
+                }
+            ]
         }
     )
 

@@ -1,66 +1,133 @@
+import jwt from "jsonwebtoken";
 import db from "../../db/connection/conn"
 import { Request, Response } from "express";
-const { user } = db
+import { GenerateToken } from "../../helper/generateToken";
+import { comparePassword } from "../../middlewares/bcryptPassword";
+const { user } = db;
 export const login = async (req: Request, res: Response) => {
     try {
-        const GetUser = await user.findOne({
-            where: { email: req.body.email }
-        })
-        if (!GetUser)
-            return res.status(401).json({ error: { email: "user does not exist" } });
+        const getUser = await user.findOne({ where: { email: req.body.email } });
+
+        if (!getUser)
+            return res.status(401).json({ message: "Invalid email or password" });
+
+        const checkPassword = await comparePassword(req.body.password, getUser.dataValues.password)
+        if (!checkPassword)
+            return res.status(401).json({ message: "Invalid email or password" })
 
 
-        res.status(200).json(GetUser)
+
+
+        const token = GenerateToken(getUser.dataValues.userId)
+        const sendUser = await user.findOne({
+            where: { email: req.body.email },
+            attributes: { exclude: ["password"] }
+        });
+        const options = {
+            expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+            httpOnly: true,
+            // sameSite: true,
+            // secure: true
+        }
+        res.status(200).cookie("token", token, options).json(sendUser?.dataValues)
+
     } catch (error: any) {
         res.status(500).json(`error occurred while logging in user: ${error}`)
     }
 }
 
-function checkEmptyKeysofObject(Obj: any) {
+function checkNonEmptyKeysofObject(Obj: any) {
     let errs = true
     for (const [key, value] of Object.entries(Obj)) {
-        if (value === "" || !value) {
-            errs = false
+        if (value !== "" || value) {
+            errs = false;
+            break;
         }
+
     }
     return errs
 }
 
 export const signup = async (req: Request, res: Response) => {
     try {
-        const Error = {
-            email: "",
-            username: "",
-            password: ""
-        }
-        const checkEmail = await user.findOne({
-            where: {
-                email: req.body.email
-            }
-        }
-        )
-        const checkUserName = await user.findOne({
-            where: {
-                username: req.body.username,
-            }
-        }
-        )
+        let error: { [key: string]: any } = {}
+        const checkEmail = await user.findOne({ where: { email: req.body.email } })
 
         if (checkEmail)
-            Error.email = "Email is already in use."
-        if (checkUserName)
-            Error.username = "UserName is already in use."
-        if (!req.body.password)
-            Error.password = "Password is required."
+            error["email"] = "Email is already in use."
 
+        if (!checkNonEmptyKeysofObject(error))
+            return res.status(401).json({ Error: error })
 
-        if (checkEmptyKeysofObject(Error)) {
-            return res.status(401).json({ Error })
+        const newUser = await user.create({ ...req.body });
+
+        const getUser = await user.findOne({ where: { userId: newUser.dataValues.userId } });
+
+        const token = GenerateToken(getUser?.dataValues.userId as string)
+        const options = {
+            expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+            // httpOnly: true,
+            // sameSite: true,
+            // secure: true
+        }
+        res.status(200).cookie("token", token, options).json(getUser?.dataValues)
+    } catch (error: any) {
+        res.status(500).json(`error occurred while signing up user: ${error}`)
+    }
+}
+export const addUserInfo = async (req: Request, res: Response) => {
+    try {
+        let error: LooseObject = {}
+        req.body.role = "admin";
+
+        const checkUserInfo = await user.findOne({
+            where: {
+                userId: req.body.userId
+            }
+        });
+        if (checkUserInfo?.dataValues.firstName) {
+            return res.status(401).json({
+                Error: {
+                    userInfo: "User Info already added"
+                }
+            });
         }
 
-        const NewUser = await user.create({ ...req.body, DOB: new Date(req.body.DOB) })
+        const checkUserName = await user.findOne({
+            where: {
+                username: req.body.username
+            }
+        })
+        const checkPhoneNumber = await user.findOne({
+            where: {
+                countryCode: req.body.countryCode,
+                phoneNumber: req.body.phoneNumber
+            }
+        })
 
-        res.status(200).json(NewUser.dataValues)
+        if (checkUserName)
+            error.username = "Username already in use";
+        if (checkPhoneNumber)
+            error.phoneNumber = "Phone Number already in use";
+
+
+        if (!checkNonEmptyKeysofObject(error))
+            return res.status(401).json({ Error: error });
+
+        await user.update(req.body, { where: { userId: req.body.userId } });
+        const getUser = await user.findOne({
+            where: {
+                userId: req.body.userId
+            }
+        });
+        const token = GenerateToken(getUser?.dataValues.userId as string)
+        const options = {
+            expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+            // httpOnly: true,
+            // sameSite: true,
+            // secure: true
+        }
+        res.status(200).cookie("token", token, options).json(getUser)
     } catch (error: any) {
         res.status(500).json(`error occurred while logging in user: ${error}`)
     }
