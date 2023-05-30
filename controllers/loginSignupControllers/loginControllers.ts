@@ -112,7 +112,7 @@ export const addUserInfo = async (req: Request, res: Response) => {
 
 
         if (!checkNonEmptyKeysofObject(error))
-            return res.status(401).json({ Error: error });
+            return res.status(401).json(error);
 
         await user.update(req.body, { where: { userId: req.body.userId } });
         const getUser = await user.findOne({

@@ -9,9 +9,8 @@ import { authenticate } from '../middlewares/authenticator/authenticate';
 const commonRouter = express.Router();
 
 commonRouter.post("/login", loginValidate, login)
-
 commonRouter.post("/signup", signupValidate, hashPassword, signup)
-commonRouter.post("/add/userinfo", userinfoValidate, authenticate, addUserInfo)
+commonRouter.post("/add/userinfo", userinfoValidate, addUserInfo)
 
 
 

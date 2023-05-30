@@ -10,7 +10,6 @@ export const validatationTemplate = (req: Request, res: Response, next: NextFunc
         let { error } = schema.validate(req.body, { abortEarly: false })
         if (error?.details) {
             let Errs: { [key: string]: any } = {};
-
             error?.details.forEach((err: ValidationErrorItem) => {
                 if (log)
                     console.log(err)
