@@ -50,14 +50,14 @@ function checkNonEmptyKeysofObject(Obj: any) {
 
 export const signup = async (req: Request, res: Response) => {
     try {
-        let error: { [key: string]: any } = {}
+        let error: LooseObject = {}
         const checkEmail = await user.findOne({ where: { email: req.body.email } })
 
         if (checkEmail)
             error["email"] = "Email is already in use."
 
         if (!checkNonEmptyKeysofObject(error))
-            return res.status(401).json({ Error: error })
+            return res.status(401).json(error)
 
         const newUser = await user.create({ ...req.body });
 
