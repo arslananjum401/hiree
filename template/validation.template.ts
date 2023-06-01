@@ -17,8 +17,7 @@ export const validatationTemplate = (req: Request, res: Response, next: NextFunc
                 if (err?.context)
                     Errs[err.context.key as string] = err.message
             })
-
-            return res.status(400).json({ Errors: Errs })
+            return res.status(400).json(Errs)
         }
 
         next()

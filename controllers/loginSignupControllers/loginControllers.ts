@@ -86,10 +86,8 @@ export const addUserInfo = async (req: Request, res: Response) => {
             }
         });
         if (checkUserInfo?.dataValues.firstName) {
-            return res.status(401).json({
-                Error: {
-                    userInfo: "User Info already added"
-                }
+            return res.status(409).json({
+                userInfo: "User Info already added"
             });
         }
 
@@ -112,7 +110,7 @@ export const addUserInfo = async (req: Request, res: Response) => {
 
 
         if (!checkNonEmptyKeysofObject(error))
-            return res.status(401).json(error);
+            return res.status(409).json(error);
 
         await user.update(req.body, { where: { userId: req.body.userId } });
         const getUser = await user.findOne({

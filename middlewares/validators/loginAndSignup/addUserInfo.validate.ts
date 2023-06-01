@@ -23,6 +23,11 @@ export const userinfoValidate = (req: Request, res: Response, next: NextFunction
                     "any.required": "LastName is required",
                     "string.empty": "LastName is required"
                 }),
+            role: Joi.string().required()
+                .messages({
+                    "any.required": "Role is required",
+                    "string.empty": "Role is required"
+                }),
             username: Joi.string().required()
                 .messages({
                     "any.required": "Username is required",
