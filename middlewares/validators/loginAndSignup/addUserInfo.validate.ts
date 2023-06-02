@@ -5,6 +5,7 @@ import { userSchema } from "../../../db/schema/user";
 
 
 export const userinfoValidate = (req: Request, res: Response, next: NextFunction,) => {
+    console.log(1)
     const schema = Joi.object()
         .keys({
             userId: Joi.string().guid({ version: ["uuidv4"] }).required()

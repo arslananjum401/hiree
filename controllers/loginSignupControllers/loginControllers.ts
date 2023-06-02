@@ -77,6 +77,7 @@ export const signup = async (req: Request, res: Response) => {
 }
 export const addUserInfo = async (req: Request, res: Response) => {
     try {
+
         let error: LooseObject = {}
         req.body.role = "admin";
 
@@ -85,7 +86,8 @@ export const addUserInfo = async (req: Request, res: Response) => {
                 userId: req.body.userId
             }
         });
-        if (checkUserInfo?.dataValues.firstName) {
+
+        if (checkUserInfo?.dataValues?.firstName) {
             return res.status(409).json({
                 userInfo: "User Info already added"
             });
@@ -125,7 +127,7 @@ export const addUserInfo = async (req: Request, res: Response) => {
             // sameSite: true,
             // secure: true
         }
-        res.status(200).cookie("token", token, options).json(getUser)
+        res.status(200).json(getUser)
     } catch (error: any) {
         res.status(500).json(`error occurred while logging in user: ${error}`)
     }

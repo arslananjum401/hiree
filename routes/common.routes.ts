@@ -10,7 +10,7 @@ const commonRouter = express.Router();
 
 commonRouter.post("/login", loginValidate, login)
 commonRouter.post("/signup", signupValidate, hashPassword, signup)
-commonRouter.post("/add/userinfo", userinfoValidate, addUserInfo)
+commonRouter.post("/add/userinfo", userinfoValidate, authenticate, addUserInfo)
 
 
 
